@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import Editor from '@monaco-editor/react';
 
 // 使用toCamelCase将kebab-case或snake_case转换为camelCase
-const toCamelCase = (str) => {
+const toCamelCase = (str: string) => {
   return str.replace(/[-_]([a-z])/g, (g) => g[1].toUpperCase());
 };
 
 // 转换className为CSS Modules格式并收集所有类名
-const transformClassNames = (code) => {
+const transformClassNames = (code: string) => {
   const classNames = new Set();
   
   // 匹配className="xxx"和className={`xxx`}的模式
@@ -20,7 +20,7 @@ const transformClassNames = (code) => {
 
     // 处理多个class的情况
     const classes = classContent.split(/\s+/).filter(Boolean);
-    const transformedClasses = classes.map(cls => {
+    const transformedClasses = classes.map((cls: string) => {
       // 排除已经是模块引用的情况（styles.xxx）
       if (cls.startsWith('styles.')) return cls;
       if (cls.startsWith('iconfont')) return `"${cls}"`;
@@ -45,13 +45,13 @@ const transformClassNames = (code) => {
     .join('\n\n');
 
   return {
-    transformedCode: `import styles from './Component.module.scss';\n\n${transformedCode}`,
+    transformedCode: `import styles from './style.module.scss';\n\n${transformedCode}`,
     scssContent
   };
 };
 
 const ClassNameTransformer = () => {
-  const [inputCode, setInputCode] = useState('');
+  const [inputCode, setInputCode] = useState<string | undefined>('');
   const [outputCode, setOutputCode] = useState('');
   const [scssCode, setScssCode] = useState('');
 
