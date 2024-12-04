@@ -8,7 +8,7 @@ const toCamelCase = (str: string) => {
 
 // 转换className为CSS Modules格式并收集所有类名
 const transformClassNames = (code: string) => {
-  const classNames = new Set();
+  const classNames = new Map<string, string>(); // 存储原始类名和转换后的类名
   
   // 匹配className="xxx"和className={`xxx`}的模式
   const classNameRegex = /className=(?:["'`]\s*([^"'`]+)\s*["'`]|\{(?:`([^`]+)`|["']([^"']+)["'])\})/g;
@@ -26,7 +26,7 @@ const transformClassNames = (code: string) => {
       if (cls.startsWith('iconfont')) return `"${cls}"`;
       
       const camelCase = toCamelCase(cls);
-      classNames.add(cls); // 保存原始类名
+      classNames.set(cls, camelCase); // 保存原始类名和驼峰类名的映射
       return `styles.${camelCase}`;
     });
 
@@ -40,8 +40,8 @@ const transformClassNames = (code: string) => {
   });
 
   // 生成SCSS内容
-  const scssContent = Array.from(classNames)
-    .map(className => `.${className} {\n  \n}`)
+  const scssContent = Array.from(classNames.entries())
+    .map(([originalName, camelCase]) => `.${camelCase} {\n  // Original: ${originalName}\n}`)
     .join('\n\n');
 
   return {
